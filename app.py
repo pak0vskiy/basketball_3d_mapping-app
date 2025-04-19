@@ -219,14 +219,26 @@ def main():
                             locally=locally
                         )
                         
-                        # Process video
-                        metrics = processor.process_video(output_path="mapped_output.mp4", display=False)
-                        # Ensure the video writer is fully closed
+                        # Add debug messages
+                        st.write("Starting video processing...")
                         
-                        # Convert video format
+                        # Process video with debug info
+                        metrics = processor.process_video(output_path="mapped_output.mp4", display=False)
+                        
+                        if metrics is None:
+                            st.error("No metrics were generated during processing")
+                            return
+                            
+                        # Verify output file exists
+                        if not os.path.exists("mapped_output.mp4"):
+                            st.error("Output video file was not created")
+                            return
+                            
+                        st.write("Video processing completed. Converting format...")
+                        
+                        # Convert video format with error capture
                         try:
-                            # Try using system ffmpeg first
-                            subprocess.run([
+                            result = subprocess.run([
                                 "ffmpeg", "-y",
                                 "-i", "mapped_output.mp4",
                                 "-c:v", "libx264",
@@ -234,36 +246,42 @@ def main():
                                 "-pix_fmt", "yuv420p",
                                 "-movflags", "+faststart",
                                 "output_final.mp4"
-                            ], check=True, capture_output=True)
+                            ], check=True, capture_output=True, text=True)
+                            
+                            if not os.path.exists("output_final.mp4"):
+                                st.error(f"FFMPEG conversion failed: {result.stderr}")
+                                return
+                                
+                        except subprocess.CalledProcessError as e:
+                            st.error(f"FFMPEG error: {e.stderr}")
+                            return
                         except FileNotFoundError:
-                            # Fallback to local ffmpeg if available
-                            ffmpeg_path = os.path.join("ffmpeg", "bin", "ffmpeg.exe")
-                            subprocess.run([
-                                ffmpeg_path, "-y",
-                                "-i", "mapped_output.mp4",
-                                "-c:v", "libx264",
-                                "-preset", "medium",
-                                "-pix_fmt", "yuv420p",
-                                "-movflags", "+faststart",
-                                "output_final.mp4"
-                            ], check=True, capture_output=True)
-                        
-                        # Clear progress indicators
-                        progress_bar.empty()
-                        status_text.empty()
-                        
-                        # Show success message
-                        st.success("Video processing complete!")
-                        
-                        # Display videos
-                        st.subheader("Original Video")
-                        st.video("temp_video.mp4")
-                        st.subheader("Mapped Video")
-                        st.video("output_final.mp4")
-                        display_metrics(metrics, court_side)
-                        
+                            st.error("FFMPEG not found in system path")
+                            return
+                            
+                        # Verify final output exists and has size > 0
+                        if os.path.exists("output_final.mp4") and os.path.getsize("output_final.mp4") > 0:
+                            st.success("Video processing complete!")
+                            
+                            # Display videos
+                            st.subheader("Original Video")
+                            st.video("temp_video.mp4")
+                            st.subheader("Mapped Video")
+                            st.video("output_final.mp4")
+                            
+                            # Display metrics if they exist
+                            if metrics and len(metrics) >= 2:
+                                display_metrics(metrics, court_side)
+                            else:
+                                st.error("Invalid metrics data structure")
+                        else:
+                            st.error("Final video file is empty or not created")
+                            
                 except Exception as e:
                     st.error(f"Error processing video: {str(e)}")
+                    st.error(f"Error details: {type(e).__name__}")
+                    import traceback
+                    st.error(f"Stack trace: {traceback.format_exc()}")
                     progress_bar.empty()
                     status_text.empty()
             
