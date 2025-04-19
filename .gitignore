@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+test.py
+hugging_face_api.py
+.Python
+basketball_players_mapping/
+env/
+venv/
+.env
+.venv
+
+# Temporary files
+temp_*.jpg
+temp_*.mp4
+mapped_output.mp4
+output_final.mp4
+
+
+# IDE
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Model weights and large files
+*.pt
+*.pth
+*.onnx
