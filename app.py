@@ -222,7 +222,6 @@ def main():
                         # Process video
                         metrics = processor.process_video(output_path="mapped_output.mp4", display=False)
                         # Ensure the video writer is fully closed
-                        cv2.destroyAllWindows()
                         
                         # Convert video format
                         ffmpeg_path = os.path.join("ffmpeg", "bin", "ffmpeg.exe")
