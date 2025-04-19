@@ -224,16 +224,29 @@ def main():
                         # Ensure the video writer is fully closed
                         
                         # Convert video format
-                        ffmpeg_path = os.path.join("ffmpeg", "bin", "ffmpeg.exe")
-                        subprocess.run([
-                            ffmpeg_path, "-y",
-                            "-i", "mapped_output.mp4",
-                            "-c:v", "libx264",
-                            "-preset", "medium",
-                            "-pix_fmt", "yuv420p",
-                            "-movflags", "+faststart",
-                            "output_final.mp4"
-                        ], check=True, capture_output=True)
+                        try:
+                            # Try using system ffmpeg first
+                            subprocess.run([
+                                "ffmpeg", "-y",
+                                "-i", "mapped_output.mp4",
+                                "-c:v", "libx264",
+                                "-preset", "medium",
+                                "-pix_fmt", "yuv420p",
+                                "-movflags", "+faststart",
+                                "output_final.mp4"
+                            ], check=True, capture_output=True)
+                        except FileNotFoundError:
+                            # Fallback to local ffmpeg if available
+                            ffmpeg_path = os.path.join("ffmpeg", "bin", "ffmpeg.exe")
+                            subprocess.run([
+                                ffmpeg_path, "-y",
+                                "-i", "mapped_output.mp4",
+                                "-c:v", "libx264",
+                                "-preset", "medium",
+                                "-pix_fmt", "yuv420p",
+                                "-movflags", "+faststart",
+                                "output_final.mp4"
+                            ], check=True, capture_output=True)
                         
                         # Clear progress indicators
                         progress_bar.empty()
