@@ -448,7 +448,7 @@ class CourtMapper:
             # Reuse court segmentation result for multiple frames to reduce computation
             # Only process court every N frames
             if idx == 0 or self.court_cache_frame_count >= self.court_cache_max_age:
-                src_pts = self.extract_points_from_mask(image, court_result, visualize=False)
+                src_pts = self.extract_points_from_mask(image, court_result)
                 if src_pts is not None:
                     self.court_cache_result = src_pts
                     self.court_cache_frame_count = 0
