@@ -375,7 +375,7 @@ class CourtMapper:
         return image, court_result, player_result
 
 
-    def extract_points_from_mask(self, image, result, visualize=False):
+    def extract_points_from_mask(self, image, result):
         """Extract reference points from the court segmentation mask"""
         # Extract segmentation masks (result.masks.xy contains polygons, result.masks.data contains binary masks)
         # image = cv2.imread(frame)
@@ -421,16 +421,6 @@ class CourtMapper:
             #Convert reference points to original image scale
             reference_points[:, 0] = reference_points[:, 0] * x_scaler
             reference_points[:, 1] = reference_points[:, 1] * y_scaler
-
-            if visualize:
-                # Visualization (optional)
-                output = cv2.cvtColor(court_mask, cv2.COLOR_GRAY2BGR)
-                for point in reference_points:
-                    cv2.circle(output, tuple(point.astype(int)), 10, (255, 0, 0), -1)
-
-                cv2.imshow("Court Reference Points", output)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
 
             return reference_points
             

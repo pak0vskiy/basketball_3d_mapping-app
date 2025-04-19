@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def find_points(img, visualize=False):
+def find_points(img):
 
     # Load binary mask
     mask = img
@@ -38,17 +38,6 @@ def find_points(img, visualize=False):
     # Final four reference points (sorted: TR, BR, BL, TL)
     reference_points = np.array([top_two[1], bottom_two[1], bottom_two[0], top_two[0]], dtype=np.float32)
 
-    if visualize:
-
-        # Visualization (optional)
-        output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        for point in points:
-            cv2.circle(output, tuple(point.astype(int)), 10, (0, 255, 0), -1)
-
-        cv2.imshow("Court Reference Points", output)
-        cv2.imwrite("reference_points.png", output)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
     
     return reference_points
 
