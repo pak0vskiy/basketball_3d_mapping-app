@@ -29,6 +29,4 @@ output_final.mp4
 Thumbs.db
 
 # Model weights and large files
-*.pt
-*.pth
 *.onnx
