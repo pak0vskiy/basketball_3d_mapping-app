@@ -11,6 +11,7 @@ env/
 venv/
 .env
 .venv
+yolo_hub_repo/
 
 # Temporary files
 temp_*.jpg
