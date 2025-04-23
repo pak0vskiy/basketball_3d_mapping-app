@@ -12,13 +12,11 @@ A real-time basketball analytics tool that maps player positions from video/imag
 - **Player Detection & Tracking**
   - Automatic player detection using YOLO
   - Team classification based on jersey colors
-  - Ball tracking
   - Real-time position mapping to 2D court diagram
 
 - **Advanced Analytics**
   - Team-based heatmaps
   - Distance covered tracking
-  - Ball possession statistics
   - Court coverage analysis
   - Both half-court sides support (left/right)
 
