@@ -138,7 +138,7 @@ class CourtMapper:
                         (curr_pos[1] - prev_pos[1])**2
                     )
                     # Convert pixels to meters (approximate court width is 28m)
-                    distance_meters = distance * (28 / 1280)
+                    distance_meters = distance * (28 / 372)
                     self.player_metrics[team]['total_distance'] += distance_meters
             
             # Update previous positions
@@ -152,7 +152,7 @@ class CourtMapper:
                 'total_distance_km': round(metrics['total_distance'] / 1000, 2),
                 'court_coverage_percentage': round(
                     len(metrics['court_coverage']) / 
-                    ((1280 / self.cell_size) * (640 / self.cell_size)) * 100, 1
+                    ((372 / self.cell_size) * (640 / self.cell_size)) * 100, 1
                 ),
                 'heatmap': metrics['heatmap']
             }
