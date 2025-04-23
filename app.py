@@ -7,8 +7,8 @@ from src.utils.video_processor import CourtVideoProcessor
 import subprocess
 import os
 import torch
-import seaborn as sns
 import matplotlib.pyplot as plt
+import imageio_ffmpeg
 
 def check_gpu():
     if torch.cuda.is_available():
@@ -26,17 +26,15 @@ def display_metrics(metrics, court_side="left"):
     # Stats columns
     col1, col2 = st.columns(2)
     with col1:
-        st.write("Team 1 (Red)")
-        st.write(f"Distance covered: {metrics[0]['total_distance_km']} km")
-        st.write(f"Ball possession: {metrics[0]['possession_percentage']}%")
-        st.write(f"Court coverage: {metrics[0]['court_coverage_percentage']}%")
+        st.title("Team 1 (Red)")
+        st.metric(f"Distance covered: ", f"{metrics[0]['total_distance_km']} km")
+        st.metric(f"Court coverage: ", f"{metrics[0]['court_coverage_percentage']} %")
         
         
     with col2:
-        st.write("Team 2 (Blue)")  
-        st.write(f"Distance covered: {metrics[1]['total_distance_km']} km")
-        st.write(f"Ball possession: {metrics[1]['possession_percentage']}%")
-        st.write(f"Court coverage: {metrics[1]['court_coverage_percentage']}%")
+        st.title("Team 2 (Blue)")  
+        st.metric(f"Distance covered: ", f"{metrics[1]['total_distance_km']} km")
+        st.metric(f"Court coverage: ", f"{metrics[1]['court_coverage_percentage']} %")
         
     if 'heatmap' in metrics[0] and 'heatmap' in metrics[1]:
         st.subheader("Team Movement Heatmaps")
@@ -235,11 +233,13 @@ def main():
                             return
                             
                         st.write("Video processing completed. Converting format...")
+
+                        ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
                         
                         # Convert video format with error capture
                         try:
                             result = subprocess.run([
-                                "ffmpeg", "-y",
+                                ffmpeg_path, "-y",
                                 "-i", "mapped_output.mp4",
                                 "-c:v", "libx264",
                                 "-preset", "medium",
