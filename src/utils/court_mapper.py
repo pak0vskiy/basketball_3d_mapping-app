@@ -94,13 +94,11 @@ class CourtMapper:
             0: {  # Team 0
                 'total_distance': 0,
                 'heatmap': np.zeros((372, 640)),  # Court dimensions 
-                'possession_time': 0,
                 'court_coverage': set()
             },
             1: {  # Team 1 
                 'total_distance': 0,
                 'heatmap': np.zeros((372, 640)),
-                'possession_time': 0,
                 'court_coverage': set()
             }
         }
@@ -110,7 +108,6 @@ class CourtMapper:
     def update_metrics(self, court_positions, frame_idx):
         """Update player metrics for each frame"""
         current_positions = {0: {}, 1: {}}
-        ball_pos = None
         
         for pos in court_positions:
             x, y, det_label, team = pos
@@ -147,33 +144,12 @@ class CourtMapper:
             # Update previous positions
             self.previous_positions[team] = current_positions[team]
         
-        # Update possession based on proximity to ball
-        if ball_pos:
-            min_dist = float('inf')
-            possession_team = None
-            for team in [0, 1]:
-                for player_pos in current_positions[team].values():
-                    dist = np.sqrt(
-                        (ball_pos[0] - player_pos[0])**2 + 
-                        (ball_pos[1] - player_pos[1])**2
-                    )
-                    if dist < min_dist:
-                        min_dist = dist
-                        possession_team = team
-            
-            if possession_team is not None and min_dist < 100:  # Threshold for possession
-                self.player_metrics[possession_team]['possession_time'] += 1
 
     def get_metrics_summary(self):
         """Return summary of tracked metrics"""
         return {
             team: {
                 'total_distance_km': round(metrics['total_distance'] / 1000, 2),
-                'possession_percentage': round(
-                    metrics['possession_time'] / max(sum(
-                        t['possession_time'] for t in self.player_metrics.values()
-                    ), 1) * 100, 1
-                ),
                 'court_coverage_percentage': round(
                     len(metrics['court_coverage']) / 
                     ((1280 / self.cell_size) * (640 / self.cell_size)) * 100, 1
