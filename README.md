@@ -36,7 +36,7 @@ A real-time basketball analytics tool that maps player positions from video/imag
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/basketball_3dMapping_app.git
+git clone https://github.com/pak0vskiy/basketball_3d_mapping-app.git
 cd basketball_3dMapping_app
 ```
 
